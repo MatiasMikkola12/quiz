@@ -10,7 +10,6 @@ class App extends Component {
             responses: {},
             errors: {},
         }
-
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -38,7 +37,7 @@ class App extends Component {
     handleValidation(answers) {
         let responses = this.state.responses;
         let errors = {};
-        
+
         if (responses["1"] != answers.answers[0].correct) {
             errors["1"] = "WRONG";
         }
