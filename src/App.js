@@ -20,8 +20,18 @@ export class App extends Component {
     componentDidMount() {
         // fetch initial questions and options and set them in localstate to display in the UI
         fetch('data/data.json')
-            .then(response => response.json())
-            .then(data => this.setState({ questions: data }));
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Response not OK');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                this.setState({ questions: data })
+            })
+            .catch((error) => {
+                console.error('Some issue with the fetch:', error);
+            });
     }
 
     handleChange(response, e) {
@@ -76,7 +86,6 @@ export class App extends Component {
 
     render() {
         const questions = this.state.questions.questions
-        console.log('this.props', this.props);
         return (
             <div className="quiz-wrapper">
                 <form name="quiz" className="quiz" onSubmit={this.handleSubmit}>
