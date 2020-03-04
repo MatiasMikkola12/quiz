@@ -1,0 +1,31 @@
+.quiz-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.quiz {
+    background-color: pink;
+    margin-top: 24px;
+    padding: 24px 36px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.second-q {
+    margin-left: 12px;
+}
+
+.error {
+    color: red;
+    margin-left: 12px;
+}
+
+button {
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: black;
+    padding: 12px 12px;
+    margin-top: 20px;
+    font-size: 16px;
+}

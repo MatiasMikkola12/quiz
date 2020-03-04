@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import './App.css';
-
 import { connect } from 'react-redux';
-import { changeAnswer, correctAnswers } from './Redux';
+import { changeAnswer, correctAnswers, setErrors } from './Redux';
+import './App.css';
 
 export class App extends Component {
     constructor(props) {
@@ -19,26 +18,33 @@ export class App extends Component {
     }
 
     componentDidMount() {
+        // fetch initial questions and options and set them in localstate to display in the UI
         fetch('data/data.json')
             .then(response => response.json())
             .then(data => this.setState({ questions: data }));
     }
 
     handleChange(response, e) {
+
+        // pick up the answer selected to a question coming from the radio buttons,
+        // and dispatch to redux store
         let responses = this.state.responses;
         responses[response] = e.target.value;
-        this.setState({ responses });
         this.props.changeAnswer(responses)
     }
 
     handleSubmit(e) {
+
+        // do another call to receive the answers to questions from a different source
+        // set the correct answers to the redux store, and then call a validator function,
+        // which if a proper serverside validator, would live away from the frontend 
+        // and return just which fields dont have a correct answer, instead of worrying about
+        // the correct values in the frontend
         e.preventDefault();
-        console.log('this.props in submit', this.props)
         fetch('data/answers.json')
             .then(response => response.json())
             .then(answers => this.props.correctAnswers(answers))
-
-        this.handleValidation()
+            .then(() => this.handleValidation())
     }
 
     handleValidation() {
@@ -63,14 +69,16 @@ export class App extends Component {
         if (responses["3"] !== correct[2].correct) {
             errors["3"] = "WRONG";
         }
-        this.setState({ errors: errors });
+
+        // dispatch an action to set errors object in redux store
+        this.props.setErrors({ errors: errors })
     }
 
     render() {
         const questions = this.state.questions.questions
-        console.log("render this.props", this.props)
+        console.log('this.props', this.props);
         return (
-            <div>
+            <div className="quiz-wrapper">
                 <form name="quiz" className="quiz" onSubmit={this.handleSubmit}>
                     {
                         questions && questions.map(question => (
@@ -80,9 +88,9 @@ export class App extends Component {
                                 <input name={question.id} ref={question.id} type="radio" onChange={this.handleChange.bind(this, `${question.id}`)} value={question.option} />
                                 <label for="choiceOne">{question.option}</label>
 
-                                <input name={question.id} ref={question.id} type="radio" onChange={this.handleChange.bind(this, `${question.id}`)} value={question.option2} />
+                                <input name={question.id} ref={question.id} className="second-q" type="radio" onChange={this.handleChange.bind(this, `${question.id}`)} value={question.option2} />
                                 <label for="choiceTwo">{question.option2}</label>
-                                <span className="error">{this.state.errors[`${question.id}`]}</span>
+                                {this.props.state.mainReducer.errors && <span className="error">{this.props.state.mainReducer.errors[`${question.id}`]}</span>}
                             </div>
                         ))
                     }
@@ -93,7 +101,7 @@ export class App extends Component {
     }
 }
 
-// container stuff
+// add container stuff instead of making it to a separate file
 
 const mapStateToProps = state => ({
     state,
@@ -102,6 +110,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     changeAnswer,
     correctAnswers,
+    setErrors
 };
 
 const AppContainer = connect(

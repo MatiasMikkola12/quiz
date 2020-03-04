@@ -14,6 +14,11 @@ export const correctAnswers = answers => ({
     answers,
 });
 
+export const setErrors = errors => ({
+    type: 'SET_ERRORS',
+    errors: errors,
+});
+
 // reducers.js
 export const mainReducer = (state = {}, action) => {
     switch (action.type) {
@@ -21,6 +26,8 @@ export const mainReducer = (state = {}, action) => {
             return action.responses;
         case 'CORRECT_ANSWER':
             return Object.assign([], state, action.answers)
+        case 'SET_ERRORS':
+            return Object.assign([], state, action.errors)
         default:
             return state;
     }
